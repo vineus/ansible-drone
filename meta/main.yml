@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  author: Matt Martz
+  description: Install drone.io and it's dependencies
+  license: Apache License, Version 2.0
+  min_ansible_version: 1.2
+  platforms:
+  - name: Ubuntu
+    versions:
+    - precise
+    - raring
+  categories:
+  - cloud
+  - development
+  - system
+dependencies:
+  - role: angstwad.docker_ubuntu

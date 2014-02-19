@@ -1,0 +1,79 @@
+---
+- name: Install dependencies via apt
+  apt:
+    name: "{{ item }}"
+    cache_valid_time: 86400
+    update_cache: yes
+  with_items:
+    - python-pip
+
+- name: Install dependencies via pip
+  pip:
+    name: "{{ item }}"
+  with_items:
+    - docker-py
+
+- name: Check for drone
+  stat:
+    path: /usr/local/bin/drone
+  register: drone_stat
+
+- name: Download drone.deb
+  get_url:
+    url: http://downloads.drone.io/latest/drone.deb
+    dest: /tmp/drone.deb
+  register: drone_get
+  when: not drone_stat.stat.exists
+
+- name: Install drone.deb
+  command: dpkg -i /tmp/drone.deb
+  register: drone_dpkg
+  when: not drone_stat.stat.exists
+
+- name: Install required drone images
+  docker:
+    image: "{{ item }}"
+  with_items:
+    - bradrydzewski/ubuntu
+    - bradrydzewski/base
+  register: docker_pull
+  failed_when: docker_pull|failed and 'No command specified' not in docker_pull.msg
+
+- name: Install optionally specified drone images
+  docker:
+    image: "{{ item }}"
+  with_items: drone_images
+  register: docker_pull
+  failed_when: docker_pull|failed and 'No command specified' not in docker_pull.msg
+
+- name: Determine whether we can configure an admin user
+  set_fact:
+    drone_configure_admin: True
+  when: drone_admin_email is defined and drone_admin_password is defined and drone_admin_name is defined
+
+- name: Install sqlite3 for drone database manipulation
+  apt:
+    name: sqlite3
+    cache_valid_time: 86400
+    update_cache: yes
+    state: latest
+  when: drone_dpkg|changed and drone_configure_admin|default(False) == True
+
+- name: Template sqlite database inserts to create admin user
+  template:
+    src: createadmin.sql.j2
+    dest: /tmp/createadmin.sql
+    mode: 0400
+  when: drone_dpkg|changed and drone_configure_admin|default(False) == True
+
+- name: Insert admin user into database
+  command: "sqlite3 /var/lib/drone/drone.sqlite '.read /tmp/createadmin.sql'"
+  register: drone_insert
+  failed_when: drone_insert.rc != 0 and 'PRIMARY KEY must be unique' not in drone_insert.stderr
+  changed_when: drone_insert.rc == 0 and drone_insert|changed
+  when: drone_dpkg|changed and drone_configure_admin|default(False) == True
+
+- name: Clean up sqlite database inserts file
+  file:
+    path: /tmp/createadmin.sql
+    state: absent
