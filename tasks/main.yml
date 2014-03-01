@@ -9,71 +9,42 @@
 
 - name: Install dependencies via pip
   pip:
-    name: "{{ item }}"
+    name: "{{ item.name }}"
+    version: "{{ item.version }}"
   with_items:
-    - docker-py
+    - name: docker-py
+      version: 0.3.0
 
 - name: Check for drone
   stat:
     path: /usr/local/bin/drone
   register: drone_stat
 
+- name: Determine if Drone should be installed
+  set_fact:
+    install_drone: "{{ not drone_stat.stat.exists or upgrade_drone|default(False)|bool == True }}"
+
 - name: Download drone.deb
   get_url:
     url: http://downloads.drone.io/latest/drone.deb
     dest: /tmp/drone.deb
   register: drone_get
-  when: not drone_stat.stat.exists
+  when: install_drone|default(False)|bool
 
 - name: Install drone.deb
   command: dpkg -i /tmp/drone.deb
   register: drone_dpkg
-  when: not drone_stat.stat.exists
+  when: install_drone|default(False)|bool
 
 - name: Install required drone images
-  docker:
-    image: "{{ item }}"
+  drone_docker_pull:
+    name: "{{ item }}"
   with_items:
     - bradrydzewski/ubuntu
     - bradrydzewski/base
-  register: docker_pull
-  failed_when: docker_pull|failed and 'No command specified' not in docker_pull.msg
 
 - name: Install optionally specified drone images
-  docker:
-    image: "{{ item }}"
+  drone_docker_pull:
+    name: "{{ item.name }}"
+    tag: "{{ item['tag']|default('latest') }}"
   with_items: drone_images
-  register: docker_pull
-  failed_when: docker_pull|failed and 'No command specified' not in docker_pull.msg
-
-- name: Determine whether we can configure an admin user
-  set_fact:
-    drone_configure_admin: True
-  when: drone_admin_email is defined and drone_admin_password is defined and drone_admin_name is defined
-
-- name: Install sqlite3 for drone database manipulation
-  apt:
-    name: sqlite3
-    cache_valid_time: 86400
-    update_cache: yes
-    state: latest
-  when: drone_dpkg|changed and drone_configure_admin|default(False) == True
-
-- name: Template sqlite database inserts to create admin user
-  template:
-    src: createadmin.sql.j2
-    dest: /tmp/createadmin.sql
-    mode: 0400
-  when: drone_dpkg|changed and drone_configure_admin|default(False) == True
-
-- name: Insert admin user into database
-  command: "sqlite3 /var/lib/drone/drone.sqlite '.read /tmp/createadmin.sql'"
-  register: drone_insert
-  failed_when: drone_insert.rc != 0 and 'PRIMARY KEY must be unique' not in drone_insert.stderr
-  changed_when: drone_insert.rc == 0 and drone_insert|changed
-  when: drone_dpkg|changed and drone_configure_admin|default(False) == True
-
-- name: Clean up sqlite database inserts file
-  file:
-    path: /tmp/createadmin.sql
-    state: absent
