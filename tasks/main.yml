@@ -84,3 +84,13 @@
   shell: "sqlite3 /var/lib/drone/drone.sqlite '.read /etc/drone/drone.sql' && sqlite3 /var/lib/drone/drone.sqlite 'SELECT * FROM users; SELECT * FROM settings;' | md5sum"
   register: drone_after_hash
   changed_when: drone_after_hash.stdout != drone_before_hash.stdout
+
+- name: Configure drone daemon
+  template:
+    src: default.j2
+    dest: /etc/default/drone
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart drone

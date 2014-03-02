@@ -1,6 +1,9 @@
 ---
 drone_scheme: http
 drone_hostname: "{{ ansible_ssh_host|default(inventory_hostname) }}"
+drone_port: 80
+drone_sslcert: ''
+drone_sslkey: ''
 
 drone_github_key: ''
 drone_github_secret: ''
