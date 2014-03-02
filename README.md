@@ -1,4 +1,4 @@
-# Drone
+# Drone Ansible Role
 
 Install [drone](https://github.com/drone/drone), [docker](https://www.docker.io/), required and optional docker images for drone operation.
 
