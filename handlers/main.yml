@@ -1,0 +1,5 @@
+---
+- name: restart drone
+  service:
+    name: drone
+    state: restarted

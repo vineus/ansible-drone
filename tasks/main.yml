@@ -43,6 +43,8 @@
   command: dpkg -i /tmp/drone.deb
   register: drone_dpkg
   when: install_drone|default(False)|bool
+  notify:
+   - restart drone
 
 - name: Install required drone images
   drone_docker_pull:
