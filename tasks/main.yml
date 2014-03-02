@@ -55,6 +55,7 @@
   drone_docker_pull:
     name: "{{ item.name }}"
     tag: "{{ item['tag']|default('latest') }}"
+    state: "{{ item['state']|default('present') }}"
   with_items: drone_images
 
 - name: Install sqlite3 for drone configuration
