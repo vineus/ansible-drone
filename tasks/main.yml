@@ -76,11 +76,11 @@
   register: drone_sql
 
 - name: Hash tables to validate change
-  shell: "sqlite3 /var/lib/drone/drone.sqlite 'SELECT * from users; SELECT * from settings;' | md5sum"
+  shell: "sqlite3 /var/lib/drone/drone.sqlite 'SELECT * FROM users; SELECT * FROM settings;' | md5sum"
   register: drone_before_hash
   changed_when: False
 
-- name: Configure drone
-  shell: "sqlite3 /var/lib/drone/drone.sqlite '.read /etc/drone/drone.sql' && sqlite3 /var/lib/drone/drone.sqlite 'SELECT * from users; SELECT * from settings;' | md5sum"
+- name: Configure drone settings
+  shell: "sqlite3 /var/lib/drone/drone.sqlite '.read /etc/drone/drone.sql' && sqlite3 /var/lib/drone/drone.sqlite 'SELECT * FROM users; SELECT * FROM settings;' | md5sum"
   register: drone_after_hash
   changed_when: drone_after_hash.stdout != drone_before_hash.stdout
