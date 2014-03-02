@@ -16,7 +16,7 @@ INSERT OR REPLACE INTO "users"
         '{{ user.email|md5 }}',
         COALESCE((SELECT created FROM users WHERE email = '{{ user.email }}'), (datetime('now'))),
         COALESCE((SELECT updated FROM users WHERE email = '{{ user.email }}'), (datetime('now'))),
-        {% if user.admin|default(True) %}1{% else %}0{% endif %},
+        {{ user["admin"]|default(True)|int }},
         '{{ user["github_login"]|default("") }}',
         '{{ user["github_token"]|default("") }}',
         '{{ user["bitbucket_login"]|default("") }}',
