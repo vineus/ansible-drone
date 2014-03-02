@@ -1,0 +1,19 @@
+---
+drone_scheme: http
+drone_hostname: "{{ ansible_ssh_host|default(inventory_hostname) }}"
+
+drone_github_key: ''
+drone_github_secret: ''
+drone_github_domain: github.com
+drone_github_apiurl: https://api.github.com
+
+drone_bitbucket_key: ''
+drone_bitbucket_secret: ''
+
+drone_smtp_server: ''
+drone_smtp_port: ''
+drone_smtp_address: ''
+drone_smtp_username: ''
+drone_smtp_password: ''
+
+drone_open_invitations: 0

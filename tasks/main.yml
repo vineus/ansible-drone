@@ -20,6 +20,14 @@
     path: /usr/local/bin/drone
   register: drone_stat
 
+- name: Ensure /etc/drone exists
+  file:
+    path: /etc/drone
+    state: directory
+    owner: root
+    group: root
+    mode: 0700
+
 - name: Determine if Drone should be installed
   set_fact:
     install_drone: "{{ not drone_stat.stat.exists or upgrade_drone|default(False)|bool == True }}"
@@ -48,3 +56,28 @@
     name: "{{ item.name }}"
     tag: "{{ item['tag']|default('latest') }}"
   with_items: drone_images
+
+- name: Install sqlite3 for drone configuration
+  apt:
+    name: sqlite3
+    cache_valid_time: 86400
+    update_cache: yes
+
+- name: Template sqlite file for drone configuration
+  template:
+    src: drone.sql.j2
+    dest: /etc/drone/drone.sql
+    owner: root
+    group: root
+    mode: 0600
+  register: drone_sql
+
+- name: Hash tables to validate change
+  shell: "sqlite3 /var/lib/drone/drone.sqlite 'SELECT * from users; SELECT * from settings;' | md5sum"
+  register: drone_before_hash
+  changed_when: False
+
+- name: Configure drone
+  shell: "sqlite3 /var/lib/drone/drone.sqlite '.read /etc/drone/drone.sql' && sqlite3 /var/lib/drone/drone.sqlite 'SELECT * from users; SELECT * from settings;' | md5sum"
+  register: drone_after_hash
+  changed_when: drone_after_hash.stdout != drone_before_hash.stdout

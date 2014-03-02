@@ -1,0 +1,46 @@
+{% for user in drone_users %}
+{% if user['state']|default('present') == 'absent' %}
+DELETE FROM "users" WHERE email = '{{ user.email }}';
+{% else %}
+INSERT OR REPLACE INTO "users"
+    VALUES (
+        {{ loop.index }},
+        '{{ user.email }}',
+{% if user['update_password']|default(False) %}
+        '{{ user["password"]|default("") }}',
+{% else %}
+        COALESCE((SELECT password FROM users WHERE email = '{{ user.email }}'), '{{ user["password"]|default("") }}'),
+{% endif %}
+        COALESCE((SELECT token FROM users WHERE email = '{{ user.email }}'), '' ),
+        '{{ user.name }}',
+        '{{ user.email|md5 }}',
+        COALESCE((SELECT created FROM users WHERE email = '{{ user.email }}'), (datetime('now'))),
+        COALESCE((SELECT updated FROM users WHERE email = '{{ user.email }}'), (datetime('now'))),
+        {% if user.admin|default(True) %}1{% else %}0{% endif %},
+        '{{ user["github_login"]|default("") }}',
+        '{{ user["github_token"]|default("") }}',
+        '{{ user["bitbucket_login"]|default("") }}',
+        '{{ user["bitbucket_token"]|default("") }}',
+        '{{ user["bitbucket_secret"]|default("") }}'
+    );
+{% endif %}
+{% endfor %}
+
+INSERT OR REPLACE INTO "settings"
+    VALUES (
+        1,
+        '{{ drone_github_key }}',
+        '{{ drone_github_secret }}',
+        '{{ drone_bitbucket_key }}',
+        '{{ drone_bitbucket_secret }}',
+        '{{ drone_smtp_server }}',
+        '{{ drone_smtp_port }}',
+        '{{ drone_smtp_address }}',
+        '{{ drone_smtp_username }}',
+        '{{ drone_smtp_password }}',
+        '{{ drone_hostname }}',
+        '{{ drone_scheme }}',
+        {{ drone_open_invitations|int }},
+        '{{ drone_github_domain }}',
+        '{{ drone_github_apiurl }}'
+    );
