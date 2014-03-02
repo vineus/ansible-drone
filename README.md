@@ -31,21 +31,38 @@ Install [drone](https://github.com/drone/drone), [docker](https://www.docker.io/
 1. Install `bcrypt` python module
 1. `python -c "import bcrypt; print bcrypt.hashpw('<password>', bcrypt.gensalt());"`
 
-### Other settings
+### Email
 
-1. `drone_github_key`: Github application key
-1. `drone_github_secret`: Github application secret
-1. `drone_bitbucket_key`: Bitbucket application key
-1. `drone_bitbucket_secret`: Bitbucket application secret
 1. `drone_smtp_server`: SMTP server address
 1. `drone_smtp_port`: SMTP server port
 1. `drone_smtp_address`: EMail address to send from
 1. `drone_smtp_username`: SMTP authenticaiton username
 1. `drone_smtp_password`: SMTP authentication password
+
+### GitHub
+
+1. `drone_github_key`: GitHub application key
+1. `drone_github_secret`: GitHub application secret
+1. `drone_github_domain`: GitHub domain. Default github.com
+1. `drone_github_apiurl`: GitHub API url. Default https://api.github.com
+
+### Bitbucket
+
+1. `drone_bitbucket_key`: Bitbucket application key
+1. `drone_bitbucket_secret`: Bitbucket application secret
+
+### Daemon
+
 1. `drone_hostname`: Hostname that drone will be accessed on. Default hostname defined in inventory or "ansible\_ssh\_password"
+1. `drone_port`: Port for drone to listen on
+1. `drone_scheme`: http or https (https requires `drone_sslcert` and `drone_sslkey`)
+1. `drone_sslcert`: Path to SSL certificate
+1. `drone_sslkey`: Path to SSL key
+
+### Other
+
 1. `drone_open_invitations`: True/False (boolean). Whether open sign up is enabled. Default False.
-1. `drone_github_domain`: Github domain. Default github.com
-1. `drone_github_apiurl`: Github API url. Default https://api.github.com
+
 
 ### Note
 
@@ -83,6 +100,10 @@ Including an example of how to use your role (for instance, with variables passe
               email: johnnie@johnniewalker.com
               state: absent
           drone_hostname: drone.example.com
+          drone_scheme: https
+          drone_port: 443
+          drone_sslcert: /etc/drone/ssl.crt
+          drone_sslkey: /etc/drone/ssl.key
           drone_github_key: 3c6e0b8a9c15224a8228
           drone_github_secret: 5ebe2294ecd0e0f08eab7690d2a6ee69ccc4a4d8
           drone_smtp_server: localhost
