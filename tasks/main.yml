@@ -94,3 +94,9 @@
     mode: 0644
   notify:
     - restart drone
+
+- name: Ensure drone is started
+  service:
+    name: drone
+    state: started
+    enabled: yes
