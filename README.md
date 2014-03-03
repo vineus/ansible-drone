@@ -17,7 +17,7 @@ Drone does not currently offer an apt repository, to upgrade to a new verison su
 `drone_images` is a list of hashes, each hash containing the following:
 
 1. `name`: name of the docker repo/image
-1. `tag`: repo/image tag to pull. Default 'latest'
+1. `tag`: repo/image tag to pull. Default `latest`
 
 ### drone\_users
 
@@ -26,9 +26,9 @@ Drone does not currently offer an apt repository, to upgrade to a new verison su
 1. `name`: Persons name
 1. `email`: Persons email
 1. `password`: bcrypt password hash (optional, you will have to use forgot password to set a password)
-1. `admin`: True/False (boolean). Default False.
-1. `state`: present/absent. Default "present"
-1. `update_password`: True/False (boolean). Default False. Setting as True will ensure the specified password.
+1. `admin`: True/False (boolean). Default `False`.
+1. `state`: present/absent. Default `present`
+1. `update_password`: True/False (boolean). Default `False`. Setting as True will ensure the specified password.
 
 #### bcrypt password hash
 
@@ -47,8 +47,8 @@ Drone does not currently offer an apt repository, to upgrade to a new verison su
 
 1. `drone_github_key`: GitHub application key
 1. `drone_github_secret`: GitHub application secret
-1. `drone_github_domain`: GitHub domain. Default github.com
-1. `drone_github_apiurl`: GitHub API url. Default https://api.github.com
+1. `drone_github_domain`: GitHub domain. Default `github.com`
+1. `drone_github_apiurl`: GitHub API url. Default `https://api.github.com`
 
 ### Bitbucket
 
@@ -59,13 +59,13 @@ Drone does not currently offer an apt repository, to upgrade to a new verison su
 
 1. `drone_hostname`: Hostname that drone will be accessed on. Default hostname defined in inventory or "ansible\_ssh\_password"
 1. `drone_port`: Port for drone to listen on
-1. `drone_scheme`: http or https (https requires `drone_sslcert` and `drone_sslkey`)
+1. `drone_scheme`: http or https (https requires `drone_sslcert` and `drone_sslkey` and probably `drone_port` configured for `443`)
 1. `drone_sslcert`: Path to SSL certificate
 1. `drone_sslkey`: Path to SSL key
 
 ### Other
 
-1. `drone_open_invitations`: True/False (boolean). Whether open sign up is enabled. Default False.
+1. `drone_open_invitations`: True/False (boolean). Whether open sign up is enabled. Default `False`.
 
 
 ### Note
