@@ -50,11 +50,6 @@ Drone does not currently offer an apt repository, to upgrade to a new verison su
 * `drone_github_domain` GitHub domain. Default `github.com`
 * `drone_github_apiurl` GitHub API url. Default `https://api.github.com`
 
-### Bitbucket
-
-* `drone_bitbucket_key` Bitbucket application key
-* `drone_bitbucket_secret` Bitbucket application secret
-
 ### Daemon
 
 * `drone_hostname` Hostname that drone will be accessed on. Default hostname defined in inventory or "ansible\_ssh\_password"
