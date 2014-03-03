@@ -8,6 +8,10 @@ Install [drone](https://github.com/drone/drone), [docker](https://www.docker.io/
 
 ## Role Variables
 
+### Upgrades
+
+Drone does not currently offer an apt repository, to upgrade to a new verison supply `--extra-vars upgrade_drone=true` with your `ansible-playbook` run.
+
 ### drone\_images
 
 `drone_images` is a list of hashes, each hash containing the following:
@@ -24,7 +28,7 @@ Install [drone](https://github.com/drone/drone), [docker](https://www.docker.io/
 1. `password`: bcrypt password hash (optional, you will have to use forgot password to set a password)
 1. `admin`: True/False (boolean). Default False.
 1. `state`: present/absent. Default "present"
-1. `update_password`: True/False (boolean). Default False. Setting as True will always change the persons password.
+1. `update_password`: True/False (boolean). Default False. Setting as True will ensure the specified password.
 
 #### bcrypt password hash
 
