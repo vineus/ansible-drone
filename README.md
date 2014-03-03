@@ -78,7 +78,7 @@ Including an example of how to use your role (for instance, with variables passe
     ---
     - hosts: drone
       roles:
-        - role: drone
+        - role: sivel.drone
           drone_images:
             - name: bradrydzewski/python
               tag: 2.7
