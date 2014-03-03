@@ -11,7 +11,7 @@ INSERT OR REPLACE INTO "users"
 {% else %}
         COALESCE((SELECT password FROM users WHERE email = '{{ user.email }}'), '{{ user["password"]|default("") }}'),
 {% endif %}
-        COALESCE((SELECT token FROM users WHERE email = '{{ user.email }}'), '' ),
+        COALESCE((SELECT token FROM users WHERE email = '{{ user.email }}'), '{{ user.email|md5|b64encode|truncate(40, True, '') }}' ),
         '{{ user.name }}',
         '{{ user.email|md5 }}',
         COALESCE((SELECT created FROM users WHERE email = '{{ user.email }}'), (datetime('now'))),
