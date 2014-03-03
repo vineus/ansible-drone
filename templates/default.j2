@@ -9,4 +9,7 @@
 #   -path="":
 #   -port=":8080":
 #
-DRONED_OPTS="-port=:{{ drone_port }}{% if drone_sslcert %} -sslcert={{ drone_sslcert }}{% endif %}{% if drone_sslkey %} -sslkey={{ drone_sslkey }}{% endif %}"
+DRONED_OPTS="-port=:{{ drone_port }}
+{%- if drone_sslcert %} -sslcert={{ drone_sslcert }}{% endif %}
+{%- if drone_sslkey %} -sslkey={{ drone_sslkey }}{% endif %}
+{%- if drone_path %} -path={{ drone_path }}{% endif %}"
