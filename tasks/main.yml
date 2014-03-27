@@ -40,7 +40,10 @@
   register: drone_get
 
 - name: Install drone.deb
-  command: dpkg -i /tmp/drone.deb
+  command: dpkg --force-confdef --force-confold -i /tmp/drone.deb
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+    DEBIAN_PRIORITY: critical
   register: drone_dpkg
   when: install_drone|default(False)|bool
   notify:
