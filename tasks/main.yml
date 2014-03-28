@@ -86,7 +86,7 @@
 - name: Configure drone settings
   shell: "sqlite3 /var/lib/drone/drone.sqlite '.read /etc/drone/drone.sql' && sqlite3 /var/lib/drone/drone.sqlite 'SELECT * FROM users; SELECT * FROM settings;' | md5sum"
   register: drone_after_hash
-  changed_when: drone_after_hash.stdout != drone_before_hash.stdout
+  changed_when: drone_after_hash.stdout|trim != drone_before_hash.stdout|trim
 
 - name: Configure drone daemon
   template:

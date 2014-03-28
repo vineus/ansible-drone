@@ -35,6 +35,17 @@ Drone does not currently offer an apt repository, to upgrade to a new verison su
 1. Install `bcrypt` python module
 1. `python -c "import bcrypt; print bcrypt.hashpw('<password>', bcrypt.gensalt());"`
 
+### drone\_teams
+
+`drone_teams` is a list of hashes, each has containing the following:
+
+* `slug` Slugified team name (optional, `name` will be lowercased and spaced replaced with `-`'s for the `slug` value)
+* `name` Name of team
+* `email` Team email
+* `members` a list of hashes, each containing:
+  * `email` Email address of user, as specified in `drone_users`
+  * `role` Role of user, one of `Admin`, `Owner`, `Write`, `Read`
+
 ### Email
 
 * `drone_smtp_server` SMTP server address
@@ -98,6 +109,15 @@ Including an example of how to use your role (for instance, with variables passe
             - name: Johnnie Walker
               email: johnnie@johnniewalker.com
               state: absent
+          drone_teams:
+            - name: Whiskey
+              slug: whiskey
+              email: whiskey@ansible.com
+              members:
+                - email: jim@jimbeam.com
+                  role: Owner
+                - email: jack@jackdaniels.com
+                  role: Write
           drone_hostname: drone.example.com
           drone_scheme: https
           drone_port: 443

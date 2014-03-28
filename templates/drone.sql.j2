@@ -42,6 +42,43 @@ INSERT OR REPLACE INTO "users"
 {% endif %}
 {% endfor %}
 
+{% for team in drone_teams %}
+INSERT OR REPLACE INTO "teams"
+    (
+        id,
+        slug,
+        name,
+        email,
+        gravatar,
+        created,
+        updated
+    )
+    VALUES (
+        {{ loop.index }},
+        '{{ team["slug"]|default(team.name|lower|replace(" ", "-")) }}',
+        '{{ team.name }}',
+        '{{ team.email }}',
+        '{{ team.email|md5 }}',
+        COALESCE((SELECT created FROM teams WHERE email = '{{ team.email }}'), (datetime('now'))),
+        COALESCE((SELECT updated FROM teams WHERE email = '{{ team.email }}'), (datetime('now')))
+    );
+
+{% set teamloop = loop %}
+{% for member in team['members']|default([]) %}
+INSERT OR REPLACE INTO "members"
+    (
+        team_id,
+        user_id,
+        role
+    )
+    VALUES (
+        {{ teamloop.index }},
+        (SELECT id FROM users WHERE email = '{{ member.email }}'),
+        '{{ member["role"]|default("Read")|capitalize }}'
+    );
+
+{% endfor %}
+{% endfor %}
 INSERT OR REPLACE INTO "settings"
     (
         id,
