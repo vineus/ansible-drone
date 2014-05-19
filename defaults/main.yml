@@ -14,6 +14,9 @@ drone_github_apiurl: https://api.github.com
 drone_bitbucket_key: ''
 drone_bitbucket_secret: ''
 
+drone_gitlab_domain: ''
+drone_gitlab_apiurl: ''
+
 drone_smtp_server: ''
 drone_smtp_port: ''
 drone_smtp_address: ''
