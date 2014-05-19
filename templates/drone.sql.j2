@@ -17,7 +17,8 @@ INSERT OR REPLACE INTO "users"
         github_token,
         bitbucket_login,
         bitbucket_token,
-        bitbucket_secret
+        bitbucket_secret,
+        gitlab_token
     )
     VALUES (
         {{ loop.index }},
@@ -37,7 +38,8 @@ INSERT OR REPLACE INTO "users"
         '{{ user["github_token"]|default("") }}',
         '{{ user["bitbucket_login"]|default("") }}',
         '{{ user["bitbucket_token"]|default("") }}',
-        '{{ user["bitbucket_secret"]|default("") }}'
+        '{{ user["bitbucket_secret"]|default("") }}',
+        '{{ user["gitlab_token"]|default("") }}'
     );
 {% endif %}
 {% endfor %}
@@ -51,6 +53,8 @@ INSERT OR REPLACE INTO "settings"
         github_apiurl,
         bitbucket_key,
         bitbucket_secret,
+        gitlab_domain,
+        gitlab_apiurl,
         smtp_server,
         smtp_port,
         smtp_address,
@@ -68,6 +72,8 @@ INSERT OR REPLACE INTO "settings"
         '{{ drone_github_apiurl }}',
         '{{ drone_bitbucket_key }}',
         '{{ drone_bitbucket_secret }}',
+        '{{ drone_gitlab_domain }}',
+        '{{ drone_gitlab_apiurl }}',
         '{{ drone_smtp_server }}',
         '{{ drone_smtp_port }}',
         '{{ drone_smtp_address }}',

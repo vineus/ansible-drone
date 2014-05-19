@@ -46,9 +46,19 @@ Drone does not currently offer an apt repository, to upgrade to a new verison su
 ### GitHub
 
 * `drone_github_key` GitHub application key
-* `drone_github_secret` GitHub application secret.
+* `drone_github_secret` GitHub application secret
 * `drone_github_domain` GitHub domain. Default `github.com`
 * `drone_github_apiurl` GitHub API url. Default `https://api.github.com`
+
+### Bitbucket
+
+* `drone_bitbucket_key` Bitbucket application key
+* `drone_bitbucket_secret` Bitbucket application secret
+
+### GitLab
+
+* `drone_gitlab_domain` GitLab domain
+* `drone_gitlab_apiurl` GitLab API url
 
 ### Daemon
 
