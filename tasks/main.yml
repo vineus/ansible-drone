@@ -13,7 +13,7 @@
     version: "{{ item.version }}"
   with_items:
     - name: docker-py
-      version: 0.3.0
+      version: 0.5.3
 
 - name: Check for drone
   stat:
@@ -50,16 +50,16 @@
    - restart drone
 
 - name: Install required drone images
-  drone_docker_pull:
-    name: "{{ item }}"
+  docker:
+    image: "{{ item }}"
+    state: "present"
   with_items:
     - bradrydzewski/ubuntu
     - bradrydzewski/base
 
 - name: Install optionally specified drone images
-  drone_docker_pull:
-    name: "{{ item.name }}"
-    tag: "{{ item['tag']|default('latest') }}"
+  docker:
+    image: "{{ item.name }}:{{ item['tag']|default('latest') }}"
     state: "{{ item['state']|default('present') }}"
   with_items: drone_images
 
@@ -78,16 +78,6 @@
     mode: 0600
   register: drone_sql
 
-- name: Hash tables to validate change
-  shell: "sqlite3 /var/lib/drone/drone.sqlite 'SELECT * FROM users; SELECT * FROM settings;' | md5sum"
-  register: drone_before_hash
-  changed_when: False
-
-- name: Configure drone settings
-  shell: "sqlite3 /var/lib/drone/drone.sqlite '.read /etc/drone/drone.sql' && sqlite3 /var/lib/drone/drone.sqlite 'SELECT * FROM users; SELECT * FROM settings;' | md5sum"
-  register: drone_after_hash
-  changed_when: drone_after_hash.stdout != drone_before_hash.stdout
-
 - name: Configure drone daemon
   template:
     src: default.j2
@@ -103,3 +93,13 @@
     name: drone
     state: started
     enabled: yes
+
+- name: Hash tables to validate change
+  shell: "sqlite3 /var/lib/drone/drone.sqlite 'SELECT * FROM users; SELECT * FROM settings;' | md5sum"
+  register: drone_before_hash
+  changed_when: False
+
+- name: Configure drone settings
+  shell: "sqlite3 /var/lib/drone/drone.sqlite '.read /etc/drone/drone.sql' && sqlite3 /var/lib/drone/drone.sqlite 'SELECT * FROM users; SELECT * FROM settings;' | md5sum"
+  register: drone_after_hash
+  changed_when: drone_after_hash.stdout != drone_before_hash.stdout
